@@ -3,14 +3,14 @@
 <b>PostMan Requests<br></b>
 <p>http://localhost:8080/api/v1/auth/signup</p>
 {
-  "firstName": "John",
-  "lastName": "Doe",
-  "login": "user",
-  "password": "user",
-  "email": "john.e@exaыmsple.co22і45ma",
-  "phone": "+12345263ы335s",
-  "birthDate": "1990-01-01",
-  "initialBalance": 1000.00
+  "firstName": "John",<br>
+  "lastName": "Doe",<br>
+  "login": "user",<br>
+  "password": "user",<br>
+  "email": "john.e@exaыmsple.co22і45ma",<br>
+  "phone": "+12345263ы335s",<br>
+  "birthDate": "1990-01-01",<br>
+  "initialBalance": 1000.00<br>
 }
 
 http://localhost:8080/api/v1/auth/signin<br>
