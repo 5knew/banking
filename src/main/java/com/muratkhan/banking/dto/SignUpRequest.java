@@ -6,6 +6,7 @@ import java.util.Date;
 
 @Data
 public class SignUpRequest {
+
     private String firstName;
     private String lastName;
     private String login;
@@ -14,4 +15,5 @@ public class SignUpRequest {
     private String phone;
     private Date birthDate;
     private Double initialBalance;
+
 }

@@ -49,8 +49,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-
-
     @Transactional
     public void deleteContactInfo(Long userId, boolean emailToDelete, boolean phoneToDelete) {
         User user = userRepository.findById(userId)
@@ -70,5 +68,4 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.save(user);
     }
-
 }

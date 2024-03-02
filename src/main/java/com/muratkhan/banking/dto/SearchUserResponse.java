@@ -12,8 +12,6 @@ public class SearchUserResponse {
     private String phone;
     private Date birthDate;
 
-
-
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
@@ -21,4 +19,5 @@ public class SearchUserResponse {
 
     private Long bankAccountId;
     private Double balance;
+    private Double deposit;
 }

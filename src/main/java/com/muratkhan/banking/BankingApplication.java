@@ -20,13 +20,11 @@ public class BankingApplication implements CommandLineRunner {
 	public static void main(String[] args){
 
 		SpringApplication.run(BankingApplication.class, args);
-
 	}
 	public void run(String...args){
 		User adminAccount = userRepository.findByRole(Role.ROLE_ADMIN);
 		if(null == adminAccount){
 			User user = new User();
-
 
 			user.setEmail("admin@gmail.com");
 			user.setFirstName("admin");

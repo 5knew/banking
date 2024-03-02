@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class TransferRequest {
+
     private String toUserLogin;
     private Double amount;
+
 }

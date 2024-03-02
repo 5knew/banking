@@ -21,6 +21,7 @@ import java.time.LocalDate;
 public class AdminController {
     @Autowired
     private AdminService adminService;
+
     @GetMapping
     public ResponseEntity<String> sayHello(){
         return ResponseEntity.ok("Hi Admin");

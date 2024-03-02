@@ -11,4 +11,5 @@ import java.time.LocalDate;
 public interface AdminService {
 
     Page<SearchUserResponse> searchUsers(SearchUserRequest searchUserRequest, Pageable pageable);
+
 }

@@ -1,5 +1,4 @@
 package com.muratkhan.banking.services.impl;
-
 import com.muratkhan.banking.dto.AccountBalanceInfo;
 import com.muratkhan.banking.model.BankAccount;
 import com.muratkhan.banking.model.User;
@@ -7,6 +6,8 @@ import com.muratkhan.banking.repositories.BankAccountRepository;
 import com.muratkhan.banking.repositories.UserRepository;
 import com.muratkhan.banking.services.BankAccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,8 @@ public class BankAccountServiceImpl implements BankAccountService {
     private final BankAccountRepository bankAccountRepository;
     private final UserRepository userRepository;
 
+    @Autowired
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Transactional
     public void transferMoneyByLogin(String fromUserLogin, String toUserLogin, Double amount) {
@@ -45,7 +48,11 @@ public class BankAccountServiceImpl implements BankAccountService {
 
         userRepository.save(fromUser);
         userRepository.save(toUser);
+
+        updateAccountBalanceCache(fromUser.getId());
+        updateAccountBalanceCache(toUser.getId());
     }
+
 
     @Transactional
     public void transferToDeposit(Long userId, Double amount) {
@@ -59,25 +66,44 @@ public class BankAccountServiceImpl implements BankAccountService {
 
         account.setBalance(account.getBalance() - amount);
         account.setDepositBalance(account.getDepositBalance() + amount);
-
+        account.setInitialDeposit(account.getInitialDeposit() + amount);
         bankAccountRepository.save(account);
+
+        updateAccountBalanceCache(user.getId());
     }
 
+    protected void updateAccountBalanceCache(Long userId) {
+        String cacheKey = "accountBalance:" + userId;
+        redisTemplate.delete(cacheKey);
+        getAccountBalanceInfo(userId);
+    }
+
+
     public AccountBalanceInfo getAccountBalanceInfo(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        String cacheKey = "accountBalance:" + userId;
+        Object data = redisTemplate.opsForValue().get(cacheKey);
 
-        BankAccount account = user.getBankAccount();
-        if (account == null) {
-            throw new IllegalArgumentException("Bank account not found for user: " + userId);
+        AccountBalanceInfo balanceInfo;
+
+        if (data instanceof AccountBalanceInfo) {
+            balanceInfo = (AccountBalanceInfo) data;
+        } else {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            BankAccount account = user.getBankAccount();
+            if (account == null) {
+                throw new IllegalArgumentException("Bank account not found for user: " + userId);
+            }
+
+            balanceInfo = new AccountBalanceInfo();
+            balanceInfo.setBalance(account.getBalance());
+            balanceInfo.setDepositBalance(account.getDepositBalance());
+
+            redisTemplate.opsForValue().set(cacheKey, balanceInfo);
         }
-
-        AccountBalanceInfo balanceInfo = new AccountBalanceInfo();
-        balanceInfo.setBalance(account.getBalance());
-        balanceInfo.setDepositBalance(account.getDepositBalance());
 
         return balanceInfo;
     }
-
 
 }

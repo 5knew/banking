@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 
 @Component
@@ -24,14 +23,12 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
     private final UserService userService;
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userLogin;
-
         if(StringUtils.isEmpty(authHeader) || !org.apache.commons.lang3.StringUtils.startsWith(authHeader, "Bearer ")){
             filterChain.doFilter(request, response);
             return;
@@ -55,13 +52,6 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.setContext(securityContext);
             }
         }
-
         filterChain.doFilter(request, response);
-
-
-
-
-
-
     }
 }

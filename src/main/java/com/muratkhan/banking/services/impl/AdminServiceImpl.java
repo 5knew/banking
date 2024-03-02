@@ -13,13 +13,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
+
     private final AdminRepository adminRepository;
+
     @Override
     public Page<SearchUserResponse> searchUsers(SearchUserRequest searchUserRequest, Pageable pageable) {
         Page<User> usersPage = adminRepository.findAll((Specification<User>) (root, query, criteriaBuilder) -> {
@@ -57,6 +62,9 @@ public class AdminServiceImpl implements AdminService {
             if (user.getBankAccount() != null) {
                 response.setBankAccountId(user.getBankAccount().getId());
                 response.setBalance(user.getBankAccount().getBalance());
+                double depositBalance = user.getBankAccount().getDepositBalance();
+                BigDecimal roundedDeposit = new BigDecimal(depositBalance).setScale(2, RoundingMode.HALF_UP);
+                response.setDeposit(roundedDeposit.doubleValue());
             }
 
             return response;
